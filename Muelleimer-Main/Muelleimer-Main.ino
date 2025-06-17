@@ -97,7 +97,7 @@ void klappenLogik() {
   if (KlappeGeoeffnet == true) {
   	KlappenTimer = KlappenTimer - 0.5;
     if (KlappenTimer <= 0) {
-      Serial.println("CLOSE CLAP!");
+      Serial.println("Schließe Klappe!");
       schliesseKlappe();
       KlappenTimer = 10;
     }
@@ -116,7 +116,7 @@ void buzz(){
 
 void oeffneKlappe() {
   if (KlappeGeoeffnet != true && KlappeGesperrt == false)  {
-    Serial.println("OPEN CLAP!");
+    Serial.println("Öffne Klappe!");
     ServoMotor.write(90);
     KlappeGeoeffnet = true;
   } else if (KlappeGesperrt == true) {
@@ -128,7 +128,7 @@ void oeffneKlappe() {
 
 void schliesseKlappe() {
   if (KlappeGeoeffnet == true)  {
-  	Serial.println("CLOSE CLAP!");
+  	Serial.println("Schließe Klappe!");
     ServoMotor.write(0);
     KlappeGeoeffnet = false;
   } else {

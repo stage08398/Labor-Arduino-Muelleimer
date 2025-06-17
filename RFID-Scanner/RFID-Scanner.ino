@@ -98,6 +98,8 @@ void loop() {
   }
   else {
     Serial.println(F("Card read previously. !!!"));
+
+    // SENT SIGNAL TO MAIN ARDUINO
     digitalWrite(Signal, HIGH);
     delay(500);
   }

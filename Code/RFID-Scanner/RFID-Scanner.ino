@@ -97,7 +97,7 @@ void loop() {
     Serial.println();
   }
   else {
-    Serial.println(F("Card read previously. !!!"));
+    Serial.println(F("SIGNAL SENT. !!!"));
 
     // SENT SIGNAL TO MAIN ARDUINO
     digitalWrite(Signal, HIGH);

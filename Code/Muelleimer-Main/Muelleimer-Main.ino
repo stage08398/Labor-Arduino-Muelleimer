@@ -21,7 +21,7 @@ const int AbstandsSensorEcho2 = 5;
 const int BewegungsSensor = 12;
 const int Knopf = 9;
 
-const int RFID = 13;
+const int RFID = 12;
 
 // AKTOREN
 const int ServoMotorPin = 10;
@@ -79,19 +79,13 @@ void klappenLogik() {
     oeffneKlappe();
   }
 
-    MotionState = digitalRead(BewegungsSensor);
-  if (MotionState == 1) {
-    Serial.println("Motion!");
-    oeffneKlappe();
-  }  
+ 
   
   if (digitalRead(RFID) == 1 && KlappeGesperrt == true) {
     KlappeGesperrt = false;
-    
+    Serial.println("RFID!");
     oeffneKlappe();
-    while (Fuellstand != 0) {
-      schreibeFuellstand();
-    } 
+  
   }
   
   if (KlappeGeoeffnet == true) {
@@ -120,9 +114,9 @@ void oeffneKlappe() {
     ServoMotor.write(90);
     KlappeGeoeffnet = true;
   } else if (KlappeGesperrt == true) {
-  	Serial.println("Tried opening clap, but clap was blocked!");
+  	Serial.println("Klappe geblockt!");
   } else if (KlappeGeoeffnet == true) {
-  	Serial.println("Tried opening clap, but clap was already open!");
+  	Serial.println("Klappe schon offen!");
   }
 }
 
@@ -132,21 +126,22 @@ void schliesseKlappe() {
     ServoMotor.write(0);
     KlappeGeoeffnet = false;
   } else {
-  Serial.println("Tried closing clap, but clap was already closed");
+  Serial.println("Klappe schon zu!");
   }
 }
 
 
 void schreibeFuellstand() {
-  float distance1 = schreibeDistanz(AbstandsSensorTrigger1,AbstandsSensorEcho1);
-  float distance2 = schreibeDistanz(AbstandsSensorTrigger2,AbstandsSensorEcho2);
+  float distanz1 = schreibeDistanz(AbstandsSensorTrigger1,AbstandsSensorEcho1);
+  float distanz2 = schreibeDistanz(AbstandsSensorTrigger2,AbstandsSensorEcho2);
+  
 
-  if ((distance1 < 50 && distance1 > 5) && (distance2 < 50 && distance2 > 5)) { // beide an
+  if ((distanz1 < 50 && distanz1 > 5) && (distanz2 < 50 && distanz2 > 5)) { // beide an
     Fuellstand = 100;
-  } else if (distance1 < 50 && distance1 > 5 && distance2 > 50) { // erster an
+  } else if (distanz1 < 50 && distanz1 > 5 && distanz2 > 50) { // erster an
     Fuellstand = 50;
   
-  } else if (distance1 > 50 && distance2 > 50) { // beide aus
+  } else if (distanz1 > 50 && distanz2 > 50) { // beide aus
     Fuellstand = 0;
   }
   else {
@@ -164,7 +159,7 @@ float schreibeDistanz(int triggerPin, int echoPin) {
   // Sender kurz ausschalten um Störungen des Signal zu vermeiden
   digitalWrite(triggerPin, LOW);
   delay(5);
-  // Signal für 10 Micrsekunden senden, danach wieder ausschalten
+  // Signal für 10 Microsekunden senden, danach wieder ausschalten
   digitalWrite(triggerPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(triggerPin, LOW);
@@ -180,7 +175,11 @@ float schreibeDistanz(int triggerPin, int echoPin) {
 
 
 void setzeLEDFarbe() {
+
+
+
   if (Fuellstand == 100 || KlappeGesperrt == true) {
+    Serial.println("ROT");
     buzz();
     KlappeGesperrt = true;
     schliesseKlappe();
@@ -191,11 +190,13 @@ void setzeLEDFarbe() {
     digitalWrite(ledGruen, LOW);
 
   } else if (Fuellstand == 50) {
+    Serial.println("GELB");
     digitalWrite(ledRot, HIGH);
     digitalWrite(ledBlau, LOW);
     digitalWrite(ledGruen, HIGH);
 
   } else if (Fuellstand == 0) {
+    Serial.println("GRÜN");
     digitalWrite(ledRot, LOW);
     digitalWrite(ledBlau, LOW);
     digitalWrite(ledGruen, HIGH);
